@@ -35,3 +35,18 @@ $ npm run init
 }
 ```
 6. If execute `npm run deploy`, sync s3 bucket.
+
+
+## setting env
+| key | value | default |
+|------|---------|-----------|
+| maxAsyncS3 | | 30 |
+| s3RetryCount | | 3 |
+| s3RetryDelay | | 1000 |
+| multipartUploadThreshold | | 20971520 |
+| multipartUploadSize | | 15728640 |
+| region | | ap-northeast-1 |
+| accessKeyId | Your IAM access key | none |
+| secretAccessKey | Your IAM secret access key | none |
+| bucket | Yout S3 Bucket Name | none |
+| prefix | Your Bucket prefix path | none |
