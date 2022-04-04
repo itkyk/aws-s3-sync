@@ -1,13 +1,12 @@
 {
   "name": "@itkyk/aws-s3-sync",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "",
   "main": "./bin/index.js",
   "scripts": {
     "start": "tsc -w",
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "preinstall": "npm install --package-lock-only --ignore-scripts && npx npm-force-resolutions"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "aws",
@@ -18,7 +17,6 @@
   "license": "ISC",
   "devDependencies": {
     "@types/glob": "^7.2.0",
-    "s3": "^4.4.0",
     "typescript": "^4.6.3"
   },
   "bin": {
@@ -36,9 +34,7 @@
     "glob": "^7.2.0",
     "i": "^0.3.7",
     "is-plain-object": "^5.0.0",
-    "npm": "^8.6.0"
-  },
-  "resolutions": {
-    "graceful-fs": "4.2.4"
+    "npm": "^8.6.0",
+    "s3": "git+https://github.com/ITakayuki/node-s3-client.git"
   }
 }
