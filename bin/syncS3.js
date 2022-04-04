@@ -20,6 +20,7 @@ var deepmerge_1 = __importDefault(require("deepmerge"));
 var fs_extra_1 = __importDefault(require("fs-extra"));
 var path_1 = __importDefault(require("path"));
 var is_plain_object_1 = require("is-plain-object");
+var clearCache_1 = __importDefault(require("./clearCache"));
 var Util_1 = __importDefault(require("./Util"));
 var syncS3 = function (envPath) {
     var env = dotenv_1["default"].config({
@@ -30,7 +31,8 @@ var syncS3 = function (envPath) {
         var uploader = client.uploadDir(params);
         return uploader;
     };
-    var uploadLog = function (uploader) {
+    var uploadLog = function (uploader, cb) {
+        if (cb === void 0) { cb = function () { }; }
         var log = [];
         var uploadFilesTotalCount = 0;
         var finishFilesTotalCount = 0;
@@ -53,6 +55,7 @@ var syncS3 = function (envPath) {
                 }
                 fs_extra_1["default"].writeFileSync(path_1["default"].resolve("./s3/upload-".concat(envPath, ".log")), logData.join("\n"));
                 console.table(log);
+                cb();
             }
         });
         uploader.on("error", function (err) {
@@ -96,7 +99,14 @@ var syncS3 = function (envPath) {
         });
         // create uploader
         var uploader = createClient(s3Options, mergedParams);
-        uploadLog(uploader);
+        if (env.distributionID) {
+            uploadLog(uploader, function () {
+                (0, clearCache_1["default"])(env);
+            });
+        }
+        else {
+            uploadLog(uploader);
+        }
     }
     else {
         Util_1["default"].logRed("Cannot found .env file");

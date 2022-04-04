@@ -4,6 +4,7 @@ import deepMerge from "deepmerge";
 import fs from "fs-extra";
 import path from "path";
 import {isPlainObject} from "is-plain-object";
+import clearCache from "./clearCache"
 import Util from "./Util";
 
 export interface paramsInterface {
@@ -41,7 +42,7 @@ const syncS3 = (envPath:string) => {
     return uploader;
   }
 
-  const uploadLog = (uploader: any) => {
+  const uploadLog = (uploader: any, cb: ()=>void = ()=>{}) => {
     const log: Array<Record<string, string>> = [];
     let uploadFilesTotalCount = 0;
     let finishFilesTotalCount = 0;
@@ -63,6 +64,7 @@ const syncS3 = (envPath:string) => {
         }
         fs.writeFileSync(path.resolve(`./s3/upload-${envPath}.log`), logData.join("\n"))
         console.table(log);
+        cb();
       }
     })
     uploader.on("error", (err: any) => {
@@ -130,7 +132,13 @@ const syncS3 = (envPath:string) => {
 
     // create uploader
     const uploader = createClient(s3Options, mergedParams);
-    uploadLog(uploader);
+    if (env.distributionID) {
+      uploadLog(uploader, () => {
+        clearCache(env);
+      });
+    } else {
+      uploadLog(uploader);
+    }
   } else {
     Util.logRed("Cannot found .env file");
   }

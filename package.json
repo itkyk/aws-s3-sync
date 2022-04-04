@@ -7,9 +7,13 @@
     "start": "tsc -w",
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "preinstall": "npx npm-force-resolutions"
+    "preinstall": "npm install --package-lock-only --ignore-scripts && npx npm-force-resolutions"
   },
-  "keywords": ["aws", "s3", "sync"],
+  "keywords": [
+    "aws",
+    "s3",
+    "sync"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
@@ -24,6 +28,7 @@
     "@types/commander": "^2.12.2",
     "@types/fs-extra": "^9.0.13",
     "@types/node": "^17.0.23",
+    "aws-sdk": "^2.1106.0",
     "commander": "^9.1.0",
     "deepmerge": "^4.2.2",
     "dotenv": "^16.0.0",
