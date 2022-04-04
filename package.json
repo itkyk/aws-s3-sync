@@ -1,6 +1,6 @@
 {
   "name": "@itkyk/aws-s3-sync",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "main": "./bin/index.js",
   "scripts": {
