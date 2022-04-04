@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "preinstall": "npx npm-force-resolutions"
   },
-  "keywords": [],
+  "keywords": ["aws", "s3", "sync"],
   "author": "",
   "license": "ISC",
   "devDependencies": {
