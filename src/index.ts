@@ -8,6 +8,7 @@ import deleteInvalidation from "./utils/cloudfront.js";
 import {getConfig} from "./utils/getConfig";
 import {Command} from "commander";
 import {createConfigTemplate} from "./utils/initializeConfig";
+import type {IgnoreLike} from "glob";
 
 interface CommandOption {
   deploy: string;
@@ -44,9 +45,11 @@ export interface Option {
   configure: S3ClientConfig & CloudFrontClientConfig,
   localTarget: string;
   bucketName: string;
-  includes?: string;
+  includes?: string | string[];
+  excludes?: string | string[] | IgnoreLike;
   maxAsyncS3?: number;
   sync?: boolean;
+  force?: boolean;
   outputLog?: boolean  | {
     outDir?: string;
     filename?: string;

@@ -3,8 +3,10 @@ import type {_Object} from "@aws-sdk/client-s3";
 import type {Option} from "../index.js";
 import {log} from "../index.js";
 import * as glob from "glob";
+import type {IgnoreLike} from "glob";
 import path from "path";
 import fs, {type Stats} from "fs";
+import mime from "mime-types";
 
 type LocalFile = {[filename: string]: {stat: Stats, skip: boolean, fullPath: string}};
 type RemoteFile = {[filename: string]: _Object};
@@ -36,10 +38,11 @@ const getRemoteFiles = async(client: S3Client, bucketName: string) => {
   }
 }
 
-const getLocalFiles = (localTarget: string, pattern: string) => {
+const getLocalFiles = (localTarget: string, pattern: string | string[], ignore?: string | string[] | IgnoreLike) => {
   return glob.sync(pattern, {
     nodir: true,
     cwd: path.resolve(localTarget),
+    ignore: ignore
   }).reduce((mem, item) => {
     mem[item] = {
       stat: fs.statSync(path.join(localTarget, item)),
@@ -111,10 +114,12 @@ const uploadFiles = async(client: S3Client, uploadTargets: LocalFile[], bucketNa
       if (!item.skip) {
         const fileContent = fs.readFileSync(item.fullPath);
         try {
+          const type = mime.lookup(item.fullPath);
           const command = new PutObjectCommand({
             Bucket: bucketName,
             Key: key,
-            Body: fileContent
+            Body: fileContent,
+            ContentType: type || ""
           });
           client.send(command).then(() => {
             log.push(`upload file(${new Date().toISOString()}): ${item.fullPath} -> s3://${bucketName}/${key}`);
@@ -136,18 +141,22 @@ const uploadFiles = async(client: S3Client, uploadTargets: LocalFile[], bucketNa
 
 const syncS3 = async (options: Option) => {
   try {
+    // S3Client作成
     const client = new S3Client(options.configure);
+    // リモートファイルのデータを全て取得
     const remoteFiles = await getRemoteFiles(client, options.bucketName) || [];
-    const localFiles = getLocalFiles(options.localTarget, options.includes || "**/*");
-    checkUpdateList(localFiles, remoteFiles);
+    // targetのローカルファイルを全て取得
+    const localFiles = getLocalFiles(options.localTarget, options.includes || "**/*", options.excludes);
 
-    const data = {
-      remoteFiles: remoteFiles,
-      localFiles: localFiles
+    // forceじゃなかったらチェックする
+    if (!options.force) {
+      checkUpdateList(localFiles, remoteFiles);
     }
 
     if (options.sync) {
+      // localに存在していないファイルをリストアップ
       const deleteTargets = getDeleteList(localFiles, remoteFiles);
+
       if (Object.keys(deleteTargets).length !== 0) {
         await deleteFiles(client, deleteTargets, options.bucketName);
       }
@@ -159,7 +168,11 @@ const syncS3 = async (options: Option) => {
       const fileLogDate = `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")}-${date.getHours().toString().padStart(2, "0")}-${date.getMinutes().toString().padStart(2, "0")}-${date.getSeconds().toString().padStart(2, "0")}`
       const dir = typeof options.outputLog === "boolean" ? path.resolve("./.s3") : "outDir" in options.outputLog ? path.resolve(options.outputLog.outDir!) : path.resolve("./.s3");
       const filename = typeof options.outputLog === "boolean" ? `log-${fileLogDate}.json` : "filename" in options.outputLog ? options.outputLog.filename! : `log-${fileLogDate}.json`;
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, {recursive: true});
+      }
       fs.writeFileSync(path.join(dir, filename), log.join(",\n"));
+      console.log("put logfile -> "+ path.join(dir, filename));
     }
   } catch (e) {
     console.log(e);

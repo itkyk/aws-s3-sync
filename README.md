@@ -36,16 +36,18 @@ $ npm run init
 
 
 ## setting options
-| key                       | description                                                                                                             | default                      | 
-|---------------------------|-------------------------------------------------------------------------------------------------------------------------|------------------------------|
-| configure                 | `AWS.S3ClientConfig` & `AWS.CloudFrontClientConfig` settings.                                                           |                              |
-| localTarget               | Dir name of traget local files.                                                                                         |                              |
-| bucketName                | Name of Target Bucket.                                                                                                  |                              |
-| includes                  | Glob pattern of `localTarget`.                                                                                          | `/**/*`                      |
-| maxAsyncS3                |                                                                                                                         | 30                           |
-| sync                      | Delete file when syncing.                                                                                               | false                        |
-| outputLog                 | Log file settings.(`boolean` OR `{outDir: string, filename?: string}`)                                                  | false                        |
-| outputLog.outDir          | Output log file directory.                                                                                              | `./s3`                       | 
-| outputLog.filename        | Output log filename.                                                                                                    | `log-[yy-mm-dd-hh-mm-ss].json` | 
-| clearCache.distributionId | Target CloudFront distoributionId.                                                                                      |                         |
-| clearCache.paths               | distoribution paths.`string[]`                                                                                          |                |
+| key                       | description                                                            | default                     | 
+|---------------------------|------------------------------------------------------------------------|-----------------------------|
+| configure                 | `AWS.S3ClientConfig` & `AWS.CloudFrontClientConfig` settings.          |                             |
+| localTarget               | Dir name of traget local files.                                        |                             |
+| bucketName                | Name of Target Bucket.                                                 |                             |
+| includes                  | Glob pattern of `localTarget`.                                         | `/**/*`                     |
+| excludes                  | Glob pattern of excludes pattern.                                      |                       |
+| maxAsyncS3                |                                                                        | 30                          |
+| sync                      | Delete file when syncing.                                              | false                       |
+| force                     | Upload all files without checking remote files.                        | false                       |
+| outputLog                 | Log file settings.(`boolean` OR `{outDir: string, filename?: string}`) | false                       |
+| outputLog.outDir          | Output log file directory.                                             | `./s3`                      | 
+| outputLog.filename        | Output log filename.                                                   | `log-[yy-mm-dd-hh-mm-ss].json` | 
+| clearCache.distributionId | Target CloudFront distoributionId.                                     |                        |
+| clearCache.paths          | distoribution paths.`string[]`                                         |                |

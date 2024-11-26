@@ -1,8 +1,9 @@
 {
   "name": "@itkyk/aws-s3-sync",
-  "version": "2.0.0-alpha",
+  "version": "2.0.0-alpha-0",
   "description": "",
   "main": "./bin/index.js",
+  "files": ["./bin"],
   "scripts": {
     "start": "tsc -w",
     "prebuild": "rimraf ./bin",
@@ -20,6 +21,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@types/mime-types": "^2.1.4",
     "@types/node": "^22.5.2",
     "rimraf": "^6.0.1",
     "typescript": "^5.5.4"
@@ -28,7 +30,8 @@
     "sync": "./bin/index.js"
   },
   "exports": {
-    ".": {"types": "./bin/index.d.ts",
+    ".": {
+      "types": "./bin/index.d.ts",
       "default": "./bin/index.js"
     },
     "./config": {
@@ -41,7 +44,9 @@
     "@aws-sdk/client-s3": "^3.637.0",
     "commander": "^12.1.0",
     "esbuild": "^0.24.0",
-    "glob": "^11.0.0"
+    "glob": "^11.0.0",
+    "mime-types": "^2.1.35",
+    "mine-type": "^1.0.0"
   },
   "peerDependencies": {
     "typescript": "^4.0.0 || ^5.0.0"
